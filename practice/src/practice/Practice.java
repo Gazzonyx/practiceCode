@@ -81,6 +81,132 @@ public class Practice {
     }
     
     
+    private class HashEntry<K,V>
+    {
+      private K key = null;
+      private final V val;
+      private HashEntry next = null;
+      
+      
+      public HashEntry(K key, V val)
+      {
+          this.key = key;
+          this.val = val;
+      }
+      
+      public long getHash()
+      {          
+          long outgoing = 0;
+          if (key == null)
+              return outgoing;
+          
+          String strKey = key.toString();
+          for(char c : strKey.toCharArray())
+              outgoing = outgoing*127 + c;
+          
+          return outgoing;
+      }
+      
+      public V getVal()
+      {return val;}
+      
+      @Override
+      public String toString()
+      {return "key: " + key + "\tval: " + val + "\thash: " + getHash();}
+    }
+    
+    private class HashTable
+    {
+        private int arraySize = 100;
+        private HashEntry[] entries = null;
+        
+        
+        public HashTable(int size)
+        {
+            arraySize = size;
+            entries = new HashEntry[arraySize];
+        }
+        
+        public void insert(HashEntry entry)
+        {
+            int index = (int) (entry.getHash() % arraySize);
+            
+            // no contention for index
+            if (entries[index] == null)
+            {
+                entries[index] = entry;
+                return;
+            }
+            
+            // contention for index, add entry to chain
+            HashEntry last = entries[index];
+            while(last.next != null)
+                last = last.next;
+            last.next = entry;
+        }
+        
+        
+        private boolean resize(int size)
+        {
+            arraySize = size;
+            HashEntry[] oldArray = entries;
+            entries = new HashEntry[arraySize];
+            
+            HashEntry temp = null;
+            for(HashEntry entry : oldArray)
+            {
+                // skip empty buckets
+                if (entry == null)
+                    continue;
+                insert(entry);
+            }
+            
+            return true;
+        }
+        
+        public String toString()
+        {
+            String outgoing = "number of buckets: " + arraySize + "\n";
+            int ct = 0;
+            
+            for(HashEntry entry : entries)
+            {
+                if (entry == null)
+                {
+                    ct++;
+                    continue;
+                }
+                
+                outgoing += "bucket: " + ct + "\t" + entry;
+                
+                // grab all chained entries
+                if (entry.next != null)
+                    while((entry = entry.next) != null)
+                        outgoing += "\t" + entry;
+                
+                outgoing += "\n";
+                ct++;
+            }
+            
+            return outgoing;
+        }
+        
+        
+        public boolean expand()
+        {
+            resize(arraySize*2);
+            return true;
+        }
+        
+        public boolean shrink()
+        {
+            resize(arraySize/2);
+            return true;
+        }
+    }
+
+    
+    
     private abstract class TreeNode<T extends Comparable>
     {
         protected T item;
