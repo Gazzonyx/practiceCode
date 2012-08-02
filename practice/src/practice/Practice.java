@@ -206,7 +206,7 @@ public class Practice {
                 return find(item, node.right);
         }
         
-        public BinaryTreeNode deleteNode(T item)
+        public BinaryTreeNode deleteItem(T item)
         {
             BinaryTreeNode deleteMe = find(item);
             deleteNode(deleteMe);
@@ -278,7 +278,156 @@ public class Practice {
         }
     }
     
-    
+    private class SplayTree<T extends Comparable> extends BinarySearchTree
+    {
+        public SplayTree(T item)
+        {super(item);}
+        
+        
+        // I hate you, type erasure. It should be of type T, but Java generics stink.
+        @Override
+        public void insertItem(Comparable item)
+        {
+            super.insertItem(item);
+            splay((T)item);
+        }
+        
+        /**
+         * Delete an item from the SplayTree.
+         * @param item Key to delete
+         * @return Returns deleted item's BinaryTreeNode.
+         */
+        @Override
+        public BinaryTreeNode deleteItem(Comparable item)
+        {
+            BinaryTreeNode deleteMe = find(item);
+            BinaryTreeNode deleteMeParent = deleteMe.parent;
+            super.deleteItem((Comparable)deleteMe);
+            splay((T)deleteMeParent.item);
+            
+            return deleteMe;
+        }
+        
+        private void splay(T item)
+        {
+            BinaryTreeNode node = find(item);
+            BinaryTreeNode parent, grandparent;
+            
+            // if the search key is the root, we're done
+            if (node == root)
+                return;
+            
+            while(node != root)
+            {
+                parent = node.parent;
+                // single rotate to root position, zig once
+                if (parent == root)
+                {
+                    if (parent.item.compareTo(node.item) > 0)
+                        rotateRight(node);
+                    else
+                        rotateLeft(node);
+                    return;
+                }
+                
+                grandparent = parent.parent;
+                // if both are right or left children, zig twice
+                if ((parent.left == node && grandparent.left == parent) ||
+                    (parent.right == node && grandparent.right == parent))
+                {
+                    // rotate right
+                    if (parent.left == node)
+                    {
+                        rotateRight(parent);
+                        rotateRight(node);
+                    }
+                    
+                    // rotate left
+                    else
+                    {
+                        rotateLeft(parent);
+                        rotateLeft(node);
+                    }
+                }
+                
+                // parent is left child and node is right child or vice versa, zig-zag
+                else
+                {
+                    // rotate left, right
+                    if (parent.right == node)
+                    {
+                        rotateLeft(node);
+                        rotateRight(node);
+                    }
+                    
+                    // rotate right, left
+                    else
+                    {
+                        rotateRight(node);
+                        rotateLeft(node);
+                    }
+                }
+            }
+        }
+        
+        private void rotateRight(BinaryTreeNode node)
+        {
+            if (node == root)
+                return;
+            
+            BinaryTreeNode right = node.right;
+            BinaryTreeNode parent = node.parent;
+            BinaryTreeNode grandparent = parent.parent;
+            
+            // link node's right child to parent's left
+            parent.left = right;
+            if (right != null)
+                right.parent = parent;
+            
+            // move parent down
+            node.right = parent;
+            node.parent = grandparent;
+            parent.parent = node;
+            
+            // link grandparent (now node's parent) to node
+            if (grandparent != null)
+            {
+                if (node.item.compareTo(grandparent.item) < 0)
+                    grandparent.left = node;
+                else
+                    grandparent.right = node;
+            }
+        }
+        
+        private void rotateLeft(BinaryTreeNode node)
+        {
+            if (node == root)
+                return;
+            
+            BinaryTreeNode left = node.left;
+            BinaryTreeNode parent = node.parent;
+            BinaryTreeNode grandparent = parent.parent;
+            
+            // link node's left child to parent's right
+            parent.right = left;
+            if (left != null)
+                left.parent = parent;
+            
+            // move parent down
+            node.left = parent;
+            node.parent = grandparent;
+            parent.parent = node;
+            
+            // link grandparent (now node's parent) to node
+            if (grandparent != null)
+            {
+                if (node.item.compareTo(grandparent.item) < 0)
+                    grandparent.left = node;
+                else
+                    grandparent.right = node;
+            }
+        }
+    }
     
     
     private class MyTree<T extends Comparable<T>>
@@ -372,8 +521,6 @@ public class Practice {
     
     public Practice()
     {
-        
-        
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
