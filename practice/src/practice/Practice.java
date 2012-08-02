@@ -123,6 +123,7 @@ public class Practice {
     {
         protected BinaryTreeNode left = null;
         protected BinaryTreeNode right = null;
+        protected BinaryTreeNode parent = null;
         
         
         public BinaryTreeNode(T item)
@@ -143,7 +144,9 @@ public class Practice {
         
         
         public void insertItem(T item)
-        {insertItem(item, (BinaryTreeNode)root);}
+        {
+            insertItem(item, (BinaryTreeNode)root);
+        }
         
         private BinaryTreeNode insertItem(T item, BinaryTreeNode localRoot)
         {
@@ -164,10 +167,116 @@ public class Practice {
             
             return localRoot;
         }
+        
+        public BinaryTreeNode getMin(BinaryTreeNode parent)
+        {
+            if (parent == null)
+                return null;
+            
+            while(parent.left != null)
+                parent = parent.left;
+            return parent;
+        }
+        
+        public BinaryTreeNode getMax(BinaryTreeNode parent)
+        {
+            if (parent == null)
+                return null;
+            
+            while(parent.right != null)
+                parent = parent.right;
+            return parent;
+        }
+        
+        public BinaryTreeNode find(T item)
+        {return find(item, (BinaryTreeNode)root);}
+        
+        private BinaryTreeNode find(T item, BinaryTreeNode node)
+        {
+            if (node == null)
+                return null;
+            
+            else if (item.compareTo(node.item) == 0)
+                return node;
+            
+            else if (item.compareTo(node.item) < 0)
+                return find(item, node.left);
+            
+            else
+                return find(item, node.right);
+        }
+        
+        public BinaryTreeNode deleteNode(T item)
+        {
+            BinaryTreeNode deleteMe = find(item);
+            deleteNode(deleteMe);
+            return deleteMe;
+        }
+        
+        public void deleteNode(BinaryTreeNode node)
+        {
+            if (node == null)
+                return;
+            
+            BinaryTreeNode parent = node.parent;
+            
+            // no children
+            if (node.left == null && node.right == null)
+            {
+                // if this is the only node in the tree, it's the root
+                if (parent == null)
+                    root = null;
+                
+                // delete this node from the parent node
+                else if (node.item.compareTo(parent.item) < 0)
+                    parent.left = null;
+                else
+                    parent.right = null;
+                
+                // we out
+                return;
+            }
+            
+            // only one child, 
+            if (node.left == null ^ node.right == null)
+            {
+                // promote right child
+                if (node.left == null)
+                {
+                    // link node's child to node's parent
+                    node.right.parent = parent;
+                    
+                    // link parent to node's child
+                    if (node.item.compareTo(parent.item) < 0)
+                        parent.left = node.right;
+                    else
+                        parent.right = node.right;
+                }
+                
+                // promote left child
+                else
+                {
+                    // link node's child to node's parent
+                    node.left.parent = parent;
+                    
+                    // link parent to node's child
+                    if(node.item.compareTo(node.item) < 0)
+                        parent.left = node.left;
+                    else
+                        parent.right = node.left;
+                }
+                
+                // we out
+                return;
+            }
+            
+            // two children
+            // whether to use success or predecessor should be randomized to avoid unbalanced tree
+            BinaryTreeNode successor = getMin(node.right);
+            node.item = successor.item;
+            deleteNode(successor);
+        }
     }
-    
-    
-    
     
     
     
@@ -263,6 +372,8 @@ public class Practice {
     
     public Practice()
     {
+        
+        
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
