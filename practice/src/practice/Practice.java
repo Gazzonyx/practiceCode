@@ -275,6 +275,18 @@ public class Practice {
             BinaryTreeNode successor = getMin(node.right);
             node.item = successor.item;
             deleteNode(successor);
+            updateRootNode();
+        }
+        
+        /**
+         * Checks to see if the root node has been assigned a parent, if it has 
+         * the root reference is updated to root.parent (since root cannot have 
+         * a parent).  Call this after any call (other than insert) that modifies the tree.
+         */
+        private void updateRootNode()
+        {
+            if (root.parent != null)
+                root = root.parent;
         }
     }
     
@@ -397,6 +409,9 @@ public class Practice {
                 else
                     grandparent.right = node;
             }
+            
+            // see if node has become the root from the rotation
+            super.updateRootNode();
         }
         
         private void rotateLeft(BinaryTreeNode node)
@@ -426,6 +441,9 @@ public class Practice {
                 else
                     grandparent.right = node;
             }
+            
+            // see if node has become the root from the rotation
+            super.updateRootNode();
         }
     }
     
