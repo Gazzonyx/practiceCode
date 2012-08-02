@@ -263,7 +263,7 @@ public class Practice {
     
     public Practice()
     {
-        
+/*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
         tree.insertItem(15);
@@ -273,6 +273,7 @@ public class Practice {
         
         int find = 16;
         System.out.println("Contains " + find + " : " + tree.contains(find));
+*/
         
 /*        
         MyVector<Integer> myVector = new MyVector();
