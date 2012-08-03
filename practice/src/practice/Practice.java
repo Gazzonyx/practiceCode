@@ -1,7 +1,7 @@
 package practice;
 
 /**
- *
+ *  Practice code.  Sorting algorithms and trees and such.
  * @author scottl
  */
 public class Practice {
