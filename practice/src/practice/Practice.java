@@ -1,5 +1,7 @@
 package practice;
 
+import java.util.ArrayList;
+
 /**
  *  Practice code.  Sorting algorithms and trees and such.
  * @author scottl
@@ -92,7 +94,6 @@ public class Practice {
             this.val = val;
         }
     }
-    
     
     private class HashTable
     {
@@ -214,7 +215,7 @@ public class Practice {
     }
 
     
-    
+    // Trees
     private abstract class TreeNode<T extends Comparable>
     {
         protected T item;
@@ -580,7 +581,6 @@ public class Practice {
         }
     }
     
-    
     private class MyTree<T extends Comparable<T>>
     {   
         private MyNode<T> treeRoot;
@@ -671,8 +671,38 @@ public class Practice {
     
     
     
+    // sorting
+    abstract class Sort
+    {
+        ArrayList<Entry> entries = new ArrayList();
+        
+        public void insert(Entry entry)
+        {entries.add(entry);}
+        
+        public void remove(Entry entry)
+        {entries.remove(entry);}
+        
+        public void printSort()
+        {
+            for(Entry entry : entries)
+                if(entry != null)
+                    System.err.println("Key: " + entry.key + "\tVal: " + entry.val);
+        }
+        
+        public abstract void sort();
+    }
+        
+    
+    
+    
+    
     public Practice()
     {
+        Integer[] ints = {1,2,3,4,5,6,7,8,9,0};
+        Entry[] entries = new Entry[ints.length];
+        for (int i = 0; i<ints.length; i++)
+            entries[i] = new Entry(ints[i], ints[i]);
+            
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
