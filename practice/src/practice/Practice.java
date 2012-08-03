@@ -710,26 +710,10 @@ public class Practice {
     }
 
     
-    public int[] extendArray(int[] incoming)
-        {
-         int[] outgoing = new int[incoming.length + 1];
-         for (int i = 0; i<incoming.length; i++)
-             outgoing[i] = incoming[i];
-         
-         return outgoing;
-        }
-    
-    public int[] shrinkArray(int[] incoming)
-    {
-        int[] outgoing = new int[incoming.length - 1];
-        for (int i = 0; i < outgoing.length; i++)
-            outgoing[i] = incoming[i];
-        
-        return outgoing;
-    }
     
     
-    public void printArray(int[] incoming)
+    
+    public static void printArray(int[] incoming)
     {
         for(int ct = 0; ct < incoming.length; ct++)
             System.out.println("[" + ct + "]" + incoming[ct]);
@@ -739,6 +723,8 @@ public class Practice {
     {
         System.out.println("-------------------------------------------------");
     }
+    
+    
     
     
     
