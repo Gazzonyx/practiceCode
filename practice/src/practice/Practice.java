@@ -81,22 +81,28 @@ public class Practice {
     }
     
     
+    public class Entry<K,V>
+    {
+        K key = null;
+        final V val;
+        
+        public Entry(K key, V val)
+        {
+            this.key = key;
+            this.val = val;
+        }
+    }
+    
     
     private class HashTable
     {
-        private class HashEntry<K,V>
+        private class HashEntry<K,V> extends Entry
         {
-            private K key = null;
-            private final V val;
             private HashEntry next = null;
-
-
+            
             public HashEntry(K key, V val)
-            {
-                this.key = key;
-                this.val = val;
-            }
-
+            {super(key,val);}
+            
             public long getHash()
             {          
                 long outgoing = 0;
@@ -111,7 +117,7 @@ public class Practice {
             }
 
             public V getVal()
-            {return val;}
+            {return (V)val;}
 
             @Override
             public String toString()
@@ -244,7 +250,6 @@ public class Practice {
         
 //        public abstract TreeNode insertItem(T item, TreeNode parent);
     }
-    
     
     
     private class BinaryTreeNode<T extends Comparable> extends TreeNode
@@ -663,6 +668,7 @@ public class Practice {
         
         
     }
+    
     
     
     public Practice()
