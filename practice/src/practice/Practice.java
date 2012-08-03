@@ -81,42 +81,44 @@ public class Practice {
     }
     
     
-    private class HashEntry<K,V>
-    {
-      private K key = null;
-      private final V val;
-      private HashEntry next = null;
-      
-      
-      public HashEntry(K key, V val)
-      {
-          this.key = key;
-          this.val = val;
-      }
-      
-      public long getHash()
-      {          
-          long outgoing = 0;
-          if (key == null)
-              return outgoing;
-          
-          String strKey = key.toString();
-          for(char c : strKey.toCharArray())
-              outgoing = outgoing*127 + c;
-          
-          return outgoing;
-      }
-      
-      public V getVal()
-      {return val;}
-      
-      @Override
-      public String toString()
-      {return "key: " + key + "\tval: " + val + "\thash: " + getHash();}
-    }
     
     private class HashTable
     {
+        private class HashEntry<K,V>
+        {
+            private K key = null;
+            private final V val;
+            private HashEntry next = null;
+
+
+            public HashEntry(K key, V val)
+            {
+                this.key = key;
+                this.val = val;
+            }
+
+            public long getHash()
+            {          
+                long outgoing = 0;
+                if (key == null)
+                    return outgoing;
+
+                String strKey = key.toString();
+                for(char c : strKey.toCharArray())
+                    outgoing = outgoing*127 + c;
+
+                return outgoing;
+            }
+
+            public V getVal()
+            {return val;}
+
+            @Override
+            public String toString()
+            {return "key: " + key + "\tval: " + val + "\thash: " + getHash();}
+        }
+
+        
         private int arraySize = 100;
         private HashEntry[] entries = null;
         
