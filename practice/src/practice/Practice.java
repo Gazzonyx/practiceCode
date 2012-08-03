@@ -83,7 +83,7 @@ public class Practice {
     }
     
     
-    public class Entry<K,V>
+    public class Entry<K extends Comparable,V>
     {
         K key = null;
         final V val;
@@ -97,7 +97,7 @@ public class Practice {
     
     private class HashTable
     {
-        private class HashEntry<K,V> extends Entry
+        private class HashEntry<K extends Comparable,V> extends Entry
         {
             private HashEntry next = null;
             
@@ -691,7 +691,7 @@ public class Practice {
         
         public abstract void sort();
     }
-        
+    
     
     
     
