@@ -693,16 +693,60 @@ public class Practice {
     }
     
     
-    
+
+    public class SelectionSort extends Sort
+    {
+        public void sort()
+        {
+            selectionSort(0);
+        }
+        
+        private synchronized void selectionSort(int index)
+        {
+            if (index == entries.size())
+                return;
+            
+            Entry lowest = entries.get(index), current;
+            int lowestIndex = index;
+            for(int ct = index; ct < entries.size(); ct++)
+            {
+                current = entries.get(ct);
+                if (lowest.key.compareTo(current.key) >= 0)
+                {
+                    lowest = current;
+                    lowestIndex = ct;
+                }
+            }
+            
+            // swap
+            current = entries.get(index);
+            entries.set(index, lowest);
+            entries.set(lowestIndex, current);
+            
+            // recurse
+            selectionSort(index+1);
+        }
+        
+    }    
     
     
     public Practice()
     {
-        Integer[] ints = {1,2,3,4,5,6,7,8,9,0};
+        Integer[] ints = {7,3,9,5,3};
         Entry[] entries = new Entry[ints.length];
-        for (int i = 0; i<ints.length; i++)
+        for (int i = 0; i < ints.length; i++)
             entries[i] = new Entry(ints[i], ints[i]);
-            
+/*  
+        // test SelectionSort class
+        Sort selectionSort = new SelectionSort();
+        for(Entry entry : entries)
+            selectionSort.insert(entry);
+        selectionSort.printSort();
+        selectionSort.sort();
+        selectionSort.printSort(); 
+*/
+        
+        
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
