@@ -693,7 +693,36 @@ public class Practice {
     }
     
     
-
+    public class InsertionSort extends Sort
+    {
+        public void sort()
+        {
+            ArrayList<Entry> sortedList = new ArrayList(entries.size());
+            insertionSort(sortedList, 0);
+            entries = sortedList;
+        }
+        
+        //  Really doesn't need to be recursive at all, but I kind of like it this way
+        private synchronized void insertionSort(ArrayList<Entry> sortedList, int index)       
+        {
+            if (entries == null || index == entries.size())
+                return;
+            
+            Entry lowestEntry = entries.get(index), currentEntry;
+            for(int ct = index; ct < entries.size(); ct++)
+                if ((currentEntry = entries.get(ct)) != null)
+                    if (lowestEntry.key.compareTo(currentEntry.key) >= 0)
+                        lowestEntry = currentEntry;
+            
+            // add to sortedList and remove entry in entries
+            sortedList.add(lowestEntry);
+            entries.remove(lowestEntry);
+            
+            // recurse
+            insertionSort(sortedList, index);
+        }
+    }
+    
     public class SelectionSort extends Sort
     {
         public void sort()
@@ -736,15 +765,15 @@ public class Practice {
         Entry[] entries = new Entry[ints.length];
         for (int i = 0; i < ints.length; i++)
             entries[i] = new Entry(ints[i], ints[i]);
-/*  
+  
         // test SelectionSort class
-        Sort selectionSort = new SelectionSort();
+        Sort sort = new InsertionSort();
         for(Entry entry : entries)
-            selectionSort.insert(entry);
-        selectionSort.printSort();
-        selectionSort.sort();
-        selectionSort.printSort(); 
-*/
+            sort.insert(entry);
+        //sort.printSort();
+        sort.sort();
+        sort.printSort(); 
+
         
         
 /*        
