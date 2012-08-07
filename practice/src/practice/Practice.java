@@ -1,6 +1,7 @@
 package practice;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *  Practice code.  Sorting algorithms and trees and such.
@@ -82,6 +83,40 @@ public class Practice {
      }
     }
     
+    public class Node
+    {
+     private Vector<Node> nodes;
+     private Vector<Integer> distances;
+     
+     public Node()
+     {
+         nodes = new Vector<Node>(2);
+         distances = new Vector<Integer>(2);
+     }
+     
+     
+     public void connectNode(Node node, int distance)
+     {
+         nodes.add(node);
+         distances.add(distance);
+     }
+     
+     public void disconnectNode(Node node)
+     {
+         if (!nodes.contains(node))
+             return;
+        distances.remove(nodes.indexOf(node));
+        nodes.remove(nodes.indexOf(node));
+     }
+     
+     public int getDistance(Node node)
+     {
+         if (!nodes.contains(node))
+             return -1;
+         return distances.elementAt(nodes.indexOf(node));
+     }
+    }
+    
     
     public class Entry<K extends Comparable,V>
     {
@@ -95,9 +130,7 @@ public class Practice {
         }
         
         public String toString()
-        {
-            return "Key: " + key + "\tVal: " + val;
-        }
+        {return "Key: " + key + "\tVal: " + val;}
     }
     
     private class HashTable
@@ -702,30 +735,20 @@ public class Practice {
     {
         public void sort()
         {
-            ArrayList<Entry> sortedList = new ArrayList(entries.size());
-            insertionSort(sortedList, 0);
-            entries = sortedList;
-        }
-        
-        //  Really doesn't need to be recursive at all, but I kind of like it this way
-        private synchronized void insertionSort(ArrayList<Entry> sortedList, int index)       
-        {
-            if (entries == null || index == entries.size())
-                return;
-            
-            Entry lowestEntry = entries.get(index), currentEntry;
-            for(int ct = index; ct < entries.size(); ct++)
-                if ((currentEntry = entries.get(ct)) != null)
-                    if (lowestEntry.key.compareTo(currentEntry.key) >= 0)
-                        lowestEntry = currentEntry;
-            
-            // add to sortedList and remove entry in entries
-            sortedList.add(lowestEntry);
-            entries.remove(lowestEntry);
-            
-            // recurse
-            insertionSort(sortedList, index);
-        }
+            Entry current;
+            int tempIndex;
+            for(int ct = 1; ct < entries.size(); ct++)
+            {
+                current = entries.get(ct);
+                tempIndex = ct;
+                while(tempIndex > 0 && entries.get(tempIndex - 1).key.compareTo(current.key) >= 0)
+                {
+                    entries.set(tempIndex, entries.get(tempIndex - 1));
+                    tempIndex--;
+                }
+                entries.set(tempIndex, current);
+            }
+        }        
     }
     
     public class SelectionSort extends Sort
@@ -936,18 +959,13 @@ public class Practice {
             entries[i] = new Entry(ints[i], ints[i]);
   
         // test SelectionSort class
-        Sort sort = new BinaryHeap(BinaryHeap.MAXHEAP);
+        Sort sort = new InsertionSort();
         for(Entry entry : entries)
             sort.insert(entry);
         //sort.printSort();
-        //sort.sort();
+        sort.sort();
         sort.printSort();
-        
-        System.out.println("Root: " + ((BinaryHeap)sort).removeRoot());
-        sort.printSort();
-        System.out.println("Root: " + ((BinaryHeap)sort).removeRoot());
-        sort.printSort();
-        
+                
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
