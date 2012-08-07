@@ -85,20 +85,30 @@ public class Practice {
     
     public class Node
     {
-     private Vector<Node> nodes;
-     private Vector<Integer> distances;
+     private Entry entry;
+     private Vector<Node> nodes = new Vector<Node>(2);
+     private Vector<Integer> distances = new Vector<Integer>(2);
+     public boolean visited = false;
      
-     public Node()
+          
+     public Node(Entry entry)
      {
          nodes = new Vector<Node>(2);
          distances = new Vector<Integer>(2);
+         setEntry(entry);
      }
      
      
-     public void connectNode(Node node, int distance)
+     public void setEntry(Entry entry)
+     {this.entry = entry;}
+     
+     public Entry getEntry()
+     {return entry;}
+          
+     public void connectNode(Node node, int weight)
      {
          nodes.add(node);
-         distances.add(distance);
+         distances.add(weight);
      }
      
      public void disconnectNode(Node node)
@@ -109,14 +119,74 @@ public class Practice {
         nodes.remove(nodes.indexOf(node));
      }
      
-     public int getDistance(Node node)
+     public int getWeight(Node node)
      {
          if (!nodes.contains(node))
              return -1;
          return distances.elementAt(nodes.indexOf(node));
      }
+     
+     public String toString()
+     {return entry.toString();}
     }
     
+    
+    public class Graph
+    {
+        Vector<Node> nodes = new Vector<Node>();
+        
+        public void addNode(Node node)
+        {
+            if (nodes.contains(node))
+                return;
+            nodes.add(node);
+            
+            // recursively add all nodes that node is connected to
+            for (Node n : node.nodes)
+                addNode(n);
+        }
+        
+        public void removeNode(Node node)
+        {
+            if (node == null)
+                return;
+            
+            for(Node n : node.nodes)
+                n.disconnectNode(node);
+            nodes.remove(node);
+        }
+        
+        public void addEdge(Node source, Node destination, int weight)
+        {source.connectNode(destination, weight);}
+        
+        public void removeEdge(Node source, Node destination)
+        {source.disconnectNode(destination);}
+        
+        public int getDistance(Node source, Node destination)
+        {return source.getWeight(destination);}
+        
+        public void dfs()
+        {
+            if (nodes == null)
+                return;
+            
+            for (Node node : nodes)
+                node.visited = false;
+            doDFS(nodes.firstElement());
+        }
+        
+        public void doDFS(Node node)
+        {
+            if (node == null || node.visited)
+                return;
+            
+            node.visited = true;
+            System.out.println("Visiting: " + node);
+            for (Node n : node.nodes)
+                doDFS(n);
+        }
+    }
+            
     
     public class Entry<K extends Comparable,V>
     {
@@ -953,7 +1023,7 @@ public class Practice {
     
     public Practice()
     {
-        Integer[] ints = {7,3,9,5,3};
+        Integer[] ints = {1,4,2,5,3};
         Entry[] entries = new Entry[ints.length];
         for (int i = 0; i < ints.length; i++)
             entries[i] = new Entry(ints[i], ints[i]);
@@ -965,7 +1035,26 @@ public class Practice {
         //sort.printSort();
         sort.sort();
         sort.printSort();
-                
+        
+        
+        Graph graph = new Graph();
+        Node[] nodes = new Node[entries.length];
+        for (int ct = 0; ct < entries.length; ct++)
+        {
+            nodes[ct] = new Node(entries[ct]);
+            graph.addNode(nodes[ct]);
+        }
+        
+        for (int ct = 0; ct < nodes.length-1; ct++)
+        {
+            graph.addEdge(nodes[ct], nodes[ct+1], 1);
+            graph.addEdge(nodes[ct+1], nodes[ct], 1);
+        }
+            
+        graph.addEdge(nodes[1], nodes[3], 1);
+        graph.addEdge(nodes[3], nodes[1], 1);
+        
+        graph.dfs();
 /*        
         MyTree<Integer> tree = new MyTree(10);
         tree.insertItem(5);
