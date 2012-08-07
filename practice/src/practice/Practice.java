@@ -93,6 +93,11 @@ public class Practice {
             this.key = key;
             this.val = val;
         }
+        
+        public String toString()
+        {
+            return "Key: " + key + "\tVal: " + val;
+        }
     }
     
     private class HashTable
@@ -686,7 +691,7 @@ public class Practice {
         {
             for(Entry entry : entries)
                 if(entry != null)
-                    System.err.println("Key: " + entry.key + "\tVal: " + entry.val);
+                    System.out.println(entry + "\tIndex: " + entries.indexOf(entry));
         }
         
         public abstract void sort();
@@ -758,6 +763,170 @@ public class Practice {
         
     }    
     
+    public class BinaryHeap extends Sort
+    {
+        public static final int MINHEAP = 0;
+        public static final int MAXHEAP = 1;
+        private final int HEAPTYPE;
+        
+        public BinaryHeap()
+        {HEAPTYPE = MINHEAP;}
+        
+        /**
+         * Set Heap type of min heap or max heap.  
+         * @see BinaryHeap.MINHEAP 
+         * @see BinaryHeap.MAXHEAP
+         * @param heapType Either MINHEAP or MAXHEAP
+         */
+        public BinaryHeap(int heapType)
+        {
+            if (heapType != MINHEAP && heapType != MAXHEAP)
+                HEAPTYPE = MINHEAP;
+            else
+                HEAPTYPE = heapType;
+        }
+        
+        public void sort()
+        {
+            
+        }
+        
+        public Entry getRoot()
+        {
+            // entries is '1' based, not '0' based.
+            if (!entries.isEmpty())
+                return entries.get(1);
+            return null;
+        }
+        
+        public Entry removeRoot()
+        {
+         // there is always a null entry at index 0
+         if (entries.size() == 1)
+             return null;
+         if (entries.size() == 2)
+             return entries.remove(1);
+         
+         Entry entry = entries.get(1);
+         
+         // move last item to first entry and bubble it down
+         entries.set(1, entries.remove(entries.size() - 1));
+         bubbleDown(1);
+         
+         return entry;
+        }
+        
+        @Override
+        public void insert(Entry entry)
+        {
+            // first entry goes into index 1
+            if (entries.isEmpty())
+            {
+                entries = new ArrayList<Entry>(2);
+                entries.add(null);
+                entries.add(entry);
+            }
+            
+            else
+            {
+                entries.add(entry);
+                bubbleUp(entries.size() - 1); // inserted item is last item in entries
+            }
+        }
+        
+        private void bubbleDown(int index)
+        {
+            Entry entry = entries.get(index);
+            int leftIndex = index * 2, rightIndex = (index * 2) + 1;
+            
+            // bail if entry doesn't exist or if it doesn't have any children
+            if (entry == null || leftIndex > entries.size() - 1)
+                return;
+            
+            // get entries for children
+            Entry leftEntry = entries.get(leftIndex);
+            Entry rightEntry = null;
+            if(rightIndex < entries.size() - 1)
+                rightEntry = entries.get(rightIndex);
+            
+            int swapIndex = -1;
+            
+            if (HEAPTYPE == MINHEAP)
+            {
+                // check to see if node is bubbled down as far as it should go
+                if (entry.key.compareTo(leftEntry.key) < 0 
+                    && (rightEntry == null || entry.key.compareTo(rightEntry.key) < 0))
+                    return;
+                
+                // promote left child if it's the only child or the smallest one
+                if (rightEntry == null  || leftEntry.key.compareTo(rightEntry.key) < 0)
+                    swapIndex = leftIndex;
+                
+                // otherwise, promote the right child
+                else
+                    swapIndex = rightIndex;                
+            }
+            
+            else if (HEAPTYPE == MAXHEAP)
+            {
+                // check to see if node is bubbled down as far as it should go
+                if (entry.key.compareTo(leftEntry.key) > 0 
+                    && (rightEntry == null || entry.key.compareTo(rightEntry.key) > 0))
+                    return;
+                
+                // promote left child if it's the only child or the largest one
+                if (rightEntry == null || leftEntry.key.compareTo(rightEntry.key) > 0)
+                    swapIndex = leftIndex;
+                
+                // otherwise, promote the right child
+                else
+                    swapIndex = rightIndex;
+            }
+            
+            // swap the entry with its child and repeat bubbledown on that node
+            swapWithParent(swapIndex);
+            bubbleDown(swapIndex);
+        }
+        
+        private void bubbleUp(int index)
+        {
+            Entry entry = entries.get(index);
+            int parentIndex = index / 2;
+            Entry parent = entries.get(parentIndex);
+            
+            if (parent == null)
+                return;
+            
+            if (HEAPTYPE == MINHEAP)
+            {
+                if (parent.key.compareTo(entry.key) > 0)
+                {
+                    swapWithParent(index);
+                    bubbleUp(parentIndex);
+                }
+            }
+            
+            else if (HEAPTYPE == MAXHEAP)
+            {
+                if (parent.key.compareTo(entry.key) < 0)
+                {
+                    swapWithParent(index);
+                    bubbleUp(parentIndex);
+                }                
+            }
+        }
+        
+        private void swapWithParent(int index)
+        {
+            if (index < 2)
+                return;
+            
+            int parentIndex = index / 2;
+            Entry temp = entries.get(parentIndex);
+            entries.set(parentIndex, entries.get(index));
+            entries.set(index, temp);
+        }
+    }
     
     public Practice()
     {
@@ -767,14 +936,17 @@ public class Practice {
             entries[i] = new Entry(ints[i], ints[i]);
   
         // test SelectionSort class
-        Sort sort = new InsertionSort();
+        Sort sort = new BinaryHeap(BinaryHeap.MAXHEAP);
         for(Entry entry : entries)
             sort.insert(entry);
         //sort.printSort();
-        sort.sort();
-        sort.printSort(); 
-
+        //sort.sort();
+        sort.printSort();
         
+        System.out.println("Root: " + ((BinaryHeap)sort).removeRoot());
+        sort.printSort();
+        System.out.println("Root: " + ((BinaryHeap)sort).removeRoot());
+        sort.printSort();
         
 /*        
         MyTree<Integer> tree = new MyTree(10);
